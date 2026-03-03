@@ -1,0 +1,30 @@
+{
+  "name": "cron-parser",
+  "version": "1.0.0",
+  "description": "Parse and describe cron expressions in plain English. Preview next run times, validate expressions, interactive builder. Zero dependencies.",
+  "type": "module",
+  "bin": {
+    "cron-parser": "./index.js",
+    "cronp": "./index.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "developer-tools",
+    "cli",
+    "nodejs",
+    "zero-dependencies",
+    "cron",
+    "scheduler",
+    "devops",
+    "automation",
+    "developer-productivity"
+  ],
+  "license": "MIT",
+  "author": "NickCirv",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NickCirv/cron-parser.git"
+  }
+}
