@@ -1,3 +1,5 @@
+![Banner](banner.svg)
+
 # cron-parser
 
 Parse, describe, and preview cron expressions in plain English. Zero external dependencies.
