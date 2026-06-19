@@ -1,136 +1,72 @@
-![Banner](banner.svg)
+<div align="center">
 
 # cron-parser
 
-Parse, describe, and preview cron expressions in plain English. Zero external dependencies.
+**Translate any cron expression into plain English — with next-run previews, validation, and an interactive builder. Zero dependencies.**
 
-```
-cron-parser "0 9 * * 1-5"
-→ At 9:00 AM, Monday through Friday
-   Next: in 19 hours (2026-03-04 09:00:00)
-```
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue?labelColor=0B0A09)](LICENSE)
+[![Zero dependencies](https://img.shields.io/badge/dependencies-0-brightgreen?labelColor=0B0A09)](package.json)
+[![Node](https://img.shields.io/badge/node-%3E%3D18-brightgreen?labelColor=0B0A09)](package.json)
+
+</div>
 
 ## Install
 
 ```bash
-npm install -g cron-parser
+npx github:NickCirv/cron-parser "0 9 * * 1-5"
 ```
 
-Or run without installing:
+Both `cron-parser` and `cronp` are available as commands after cloning:
 
 ```bash
-npx cron-parser "*/15 * * * *"
+git clone https://github.com/NickCirv/cron-parser.git
+cd cron-parser
+node index.js "0 9 * * 1-5"
 ```
 
 ## Usage
 
 ```bash
-# Describe an expression
-cron-parser "0 9 * * 1-5"
+# Describe an expression in plain English
+npx github:NickCirv/cron-parser "0 9 * * 1-5"
+# → At 9:00 AM, Monday through Friday
+#   Next: in 19 hours (2026-06-20 09:00:00)
 
-# Show next N execution times (default: 5)
-cron-parser "*/15 * * * *" --next 5
+# Show next N execution times
+npx github:NickCirv/cron-parser "*/15 * * * *" --next 5
 
 # Next runs from a specific date
-cron-parser "0 9 * * 1-5" --from "2026-06-01"
+npx github:NickCirv/cron-parser "0 9 * * 1-5" --from "2026-07-01"
 
 # Use a specific timezone
-cron-parser "0 9 * * *" --tz "America/New_York" --next 3
+npx github:NickCirv/cron-parser "0 9 * * *" --tz "America/New_York" --next 3
 
 # Output as JSON
-cron-parser "0 9 * * 1-5" --json
+npx github:NickCirv/cron-parser "0 9 * * 1-5" --json
 
-# Validate an expression (exit 0=valid, 1=invalid)
-cron-parser --validate "0 9 * * 1-5"
+# Validate an expression (exit 0 = valid, 1 = invalid)
+npx github:NickCirv/cron-parser --validate "0 9 * * 1-5"
 
 # Show common presets
-cron-parser --list
+npx github:NickCirv/cron-parser --list
 
 # Interactive expression builder
-cron-parser --interactive
+npx github:NickCirv/cron-parser --interactive
 ```
 
-Both `cron-parser` and `cronp` are available as commands.
+| Flag | Description |
+|------|-------------|
+| `--next [n]` | Show next N execution times (default: 5) |
+| `--from "YYYY-MM-DD"` | Calculate next runs from this date |
+| `--tz "Region/City"` | Display times in a specific timezone |
+| `--json` | Machine-readable JSON output |
+| `--validate` | Validate only; exits 0 (valid) or 1 (invalid) |
+| `--list` | Print common presets |
+| `--interactive` | Step-by-step expression builder |
 
-## Examples
+## What it does
 
-| Expression      | Description                                      |
-|-----------------|--------------------------------------------------|
-| `* * * * *`     | Every minute                                     |
-| `*/15 * * * *`  | Every 15 minutes                                 |
-| `0 * * * *`     | Every hour                                       |
-| `0 */4 * * *`   | Every 4 hours                                    |
-| `0 9 * * *`     | Daily at 9:00 AM                                 |
-| `0 9 * * 1-5`   | At 9:00 AM, Monday through Friday                |
-| `0 9-17 * * 1-5`| At minute 0, between 9:00 AM and 5:00 PM, Mon–Fri |
-| `30 6 * * 0`    | At 6:30 AM, only on Sunday                       |
-| `0 0 1 * *`     | At midnight, on the 1st of every month           |
-| `0 0 1 1 *`     | At midnight, on January 1st every year           |
+Parses any standard 5-field cron expression (plus `@yearly`, `@daily`, `@reboot` aliases) and describes it in plain English. Calculates the next N scheduled run times with relative labels ("in 19 hours"). Validates expressions for use in scripts with a standard exit code. Works entirely offline with no external dependencies — only Node.js built-ins.
 
-## Cron Syntax
-
-5-field standard cron format: `minute hour day-of-month month day-of-week`
-
-| Token   | Meaning           |
-|---------|-------------------|
-| `*`     | Every value       |
-| `*/n`   | Every n units     |
-| `n`     | Specific value    |
-| `n-m`   | Range n to m      |
-| `n,m,o` | List of values    |
-| `n-m/s` | Range with step s |
-
-## Special Aliases
-
-| Alias              | Equivalent     | Description                         |
-|--------------------|----------------|-------------------------------------|
-| `@yearly`          | `0 0 1 1 *`    | Once a year, January 1st            |
-| `@annually`        | `0 0 1 1 *`    | Same as @yearly                     |
-| `@monthly`         | `0 0 1 * *`    | Once a month, first day             |
-| `@weekly`          | `0 0 * * 0`    | Once a week, Sunday midnight        |
-| `@daily`           | `0 0 * * *`    | Once a day, midnight                |
-| `@midnight`        | `0 0 * * *`    | Same as @daily                      |
-| `@hourly`          | `0 * * * *`    | Once an hour                        |
-| `@reboot`          | —              | At system startup                   |
-
-## JSON Output
-
-```bash
-cron-parser "0 9 * * 1-5" --next 3 --json
-```
-
-```json
-{
-  "expression": "0 9 * * 1-5",
-  "description": "At 9:00 AM, Monday through Friday",
-  "valid": true,
-  "timezone": "America/New_York",
-  "from": "2026-03-03T09:00:00.000Z",
-  "next": [
-    {
-      "relative": "in 19 hours",
-      "formatted": "2026-03-04 09:00:00",
-      "ts": "2026-03-04T14:00:00.000Z"
-    }
-  ]
-}
-```
-
-## Validation in Scripts
-
-```bash
-if cron-parser --validate "$MY_CRON_EXPR"; then
-  echo "Expression is valid"
-else
-  echo "Expression is invalid"
-fi
-```
-
-## Requirements
-
-- Node.js >= 18
-- Zero external dependencies
-
-## License
-
-MIT
+---
+<sub>Zero dependencies · Node ≥18 · MIT · by <a href="https://github.com/NickCirv">NickCirv</a></sub>
